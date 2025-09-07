@@ -45,6 +45,7 @@ package com.util {
         }
 
         private function onIOError(e:IOErrorEvent):void {
+            trace(e)
             fail("IO_ERROR", e.text);
         }
 

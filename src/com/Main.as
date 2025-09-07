@@ -36,9 +36,13 @@ package com {
             stage.focus = this;
             //https://microsoftedge.github.io/Demos/json-dummy-data/
 
-            localUrl = rootPath() + "assets/config.json";
+            // localUrl = rootPath() + "assets/config.json";
+
+            localUrl = "assets/config.json";
             onlineUrl = "https://microsoftedge.github.io/Demos/json-dummy-data/64KB.json"; // TODO: replace with your URL
 
+            buildUI();
+            loadLocalThenOnline();
             stage.addEventListener(MouseEvent.CLICK, function(_:MouseEvent):void {
                 loadOnlineThenFallback();
             });
@@ -48,7 +52,6 @@ package com {
             graphics.beginFill(0x14161A);
             graphics.drawRect(0, 0, stage.stageWidth, stage.stageHeight);
             graphics.endFill();
-
             tf = new TextField();
             tf.defaultTextFormat = new TextFormat("_sans", 14, 0xEAEAEA);
             tf.autoSize = TextFieldAutoSize.LEFT;
@@ -58,7 +61,6 @@ package com {
             tf.x = 12;
             tf.y = 12;
             addChild(tf);
-
             box = new Shape();
             addChild(box);
         }
@@ -69,14 +71,15 @@ package com {
         }
 
         private function onLocalOk(data:Object):void {
+            trace(data)
             applyConfig(data, "LOCAL");
-// then try online to override values
+            // then try online to override values
             loadOnline(false);
         }
 
         private function onLocalErr(code:String, msg:String):void {
             log("LOCAL error [" + code + "]: " + msg);
-// still try online
+            // still try online
             loadOnline(false);
         }
 
@@ -104,8 +107,6 @@ package com {
             var ver:String = (cfg && cfg.version) ? String(cfg.version) : "?";
             var msg:String = (cfg && cfg.message) ? String(cfg.message) : "";
 
-
-// Draw box if present
             if (cfg && cfg.box) {
                 var w:Number = Number(cfg.box.w || 100);
                 var h:Number = Number(cfg.box.h || 100);
@@ -117,7 +118,6 @@ package com {
                 box.x = 32;
                 box.y = 80;
             }
-
 
             tf.text = "Source: " + source + "\n" + "Title : " + title + "\n" + "Version: " + ver + "\n" + (msg ? ("Msg : " + msg + "\n") : "") + "Click stage → try ONLINE with fallback to LOCAL.";
         }
@@ -131,12 +131,13 @@ package com {
         }
 
         private function log(s:String):void {
-            if (tf) {
-                tf.appendText((tf.length ? "\n" : "") + s);
-                tf.scrollV = tf.maxScrollV;
-            } else {
-                trace(s);
-            }
+             trace(s);
+            // if (tf) {
+            //     tf.appendText((tf.length ? "\n" : "") + s);
+            //     tf.scrollV = tf.maxScrollV;
+            // } else {
+            //     trace(s);
+            // }
         }
     }
 }
