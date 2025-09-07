@@ -1,0 +1,10 @@
+{
+    "title": "AS3 JSON Demo",
+    "version": "1.0.0",
+    "box": {
+        "w": 120,
+        "h": 80,
+        "color": 14995456
+    },
+    "message": "Hello from LOCAL JSON"
+}
