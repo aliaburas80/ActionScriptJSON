@@ -90,7 +90,6 @@ package com {
         }
 
         private function loadOnline(fallbackToLocal:Boolean):void {
-            log("Loading ONLINE: " + onlineUrl);
             new JsonLoader(function(d:Object):void {
                 applyConfig(d, "ONLINE");
             }, function(code:String, msg:String):void {
