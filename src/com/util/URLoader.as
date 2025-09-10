@@ -15,9 +15,11 @@ package com.util {
     public class URLoader extends Sprite {
         private var _URL:String = '';
         private var _format:String = URLLoaderDataFormat.TEXT;
+        private var loaderUI:LoaderUI;
 
         public function URLoader(url:String, type:String) {
             _URL = url;
+            
         }
 
         private function set format(value:String):void {
@@ -43,6 +45,7 @@ package com.util {
             urlLoader.removeEventListener(Event.COMPLETE, completeLoadingImage);
             urlLoader.addEventListener(Event.COMPLETE, completeLoadingData);
             urlLoader.addEventListener(IOErrorEvent.IO_ERROR, IOErrorHadler);
+            
         }
 
         public function loadImg():void {
@@ -56,6 +59,9 @@ package com.util {
 
         private function progressHandler(e:ProgressEvent):void {
             trace(Math.round((e.bytesLoaded / e.bytesTotal) * 100))
+            
+            var persentage:int = Math.round((e.bytesLoaded / e.bytesTotal) * 100);
+
         }
 
         private function completeLoadingImage(e:Event):void {
