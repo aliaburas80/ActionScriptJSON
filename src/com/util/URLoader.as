@@ -11,15 +11,17 @@ package com.util {
     import flash.display.Loader;
     import com.greensock.events.LoaderEvent;
     import flash.events.ProgressEvent;
+    import flash.events.EventDispatcher;
+    import com.events.LoadedImageFile;
+    import com.events.ProgressValueEvent;
 
-    public class URLoader extends Sprite {
+    public class URLoader extends EventDispatcher {
         private var _URL:String = '';
         private var _format:String = URLLoaderDataFormat.TEXT;
         private var loaderUI:LoaderUI;
 
         public function URLoader(url:String, type:String) {
             _URL = url;
-            
         }
 
         private function set format(value:String):void {
@@ -45,7 +47,7 @@ package com.util {
             urlLoader.removeEventListener(Event.COMPLETE, completeLoadingImage);
             urlLoader.addEventListener(Event.COMPLETE, completeLoadingData);
             urlLoader.addEventListener(IOErrorEvent.IO_ERROR, IOErrorHadler);
-            
+
         }
 
         public function loadImg():void {
@@ -58,10 +60,8 @@ package com.util {
         }
 
         private function progressHandler(e:ProgressEvent):void {
-            trace(Math.round((e.bytesLoaded / e.bytesTotal) * 100))
-            
             var persentage:int = Math.round((e.bytesLoaded / e.bytesTotal) * 100);
-
+            dispatchEvent(new ProgressValueEvent(ProgressValueEvent.PROGRESS, persentage))
         }
 
         private function completeLoadingImage(e:Event):void {
@@ -69,14 +69,7 @@ package com.util {
             var bmp:Bitmap = li.content as Bitmap; // smoothing if bitmap
             if (bmp)
                 bmp.smoothing = true;
-            // addChild(li.loader); // or addChild(bmp)
-            addChild(bmp)
-            bmp.width = 1024;
-            bmp.height = 1024;
-            // li.loader.x = 0;
-            // li.loader.y = 0;
-            bmp.x = 10;
-            bmp.y = 10;
+            dispatchEvent(new LoadedImageFile(LoadedImageFile.IMAGE_FILE, bmp))
         }
 
         private function completeLoadingData(e:Event):void {
@@ -89,7 +82,6 @@ package com.util {
 
         private static function completeLoadingDatbmpa(e:Event):void {
             // trace(e.target.data)
-
         }
     }
 }
