@@ -44,6 +44,7 @@ package com.factory {
                     shape.graphics.drawCircle(properties.x, properties.y, properties.radius);
                     break;
                 case ENUM.LINE:
+                    shape.graphics.lineStyle(1, properties.color, properties.alpha || 1);
                     shape.graphics.moveTo(properties.x, properties.y);
                     shape.graphics.lineTo(properties.toX, properties.toY);
                     break;

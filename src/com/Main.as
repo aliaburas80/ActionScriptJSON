@@ -12,12 +12,25 @@ package com {
     import com.factory.ShapeFactory;
     import com.util.ENUM;
     import com.util.Console;
+    import com.events.ItemAddedToStage;
+    import com.util.Random;
+    import flash.display.Stage;
+    import flash.utils.setTimeout;
+    import flash.geom.Point;
 
     public class Main extends Sprite {
 
         private var loader:URLoader
         private var progressBar:ShapeFactory;
-        private var console:Console=new Console('MAIN');
+        private var randomLine:ShapeFactory;
+        private var console:Console = new Console('MAIN');
+        private var _stage:Stage;
+        private var stageProp:Object;
+        private var startPoint:Point;
+
+        private  const BMP_WIDTH:int = 450;
+        private  const BMP_HEIGHT:int = 400;
+
         public function Main():void {
             super();
             if (stage)
@@ -29,15 +42,16 @@ package com {
         private function onAddedToStage(e:Event = null):void {
             if (e)
                 removeEventListener(Event.ADDED_TO_STAGE, onAddedToStage);
-
+            _stage = stage;
             stage.align = StageAlign.TOP_LEFT;
             stage.scaleMode = StageScaleMode.EXACT_FIT;
             stage.focus = this;
-
+            stageProp = {width: stage.stageWidth,
+                    height: stage.stageHeight}
             createProgressBar();
-
             loadSimpleTxt();
             loadSimpleImage();
+            addEventListener(ItemAddedToStage.ITEM_ADDES_TO_STAGE, drawLines)
         }
 
         private function createProgressBar(width:int = 0):void {
@@ -58,17 +72,34 @@ package com {
 
         private function loadedImageFileHandler(e:LoadedImageFile):void {
             var bitmap:Bitmap = e.imageFile;
-            bitmap.alpha = 0.5;
-            bitmap.x = 10;
-            bitmap.y = 10;
-            bitmap.width = 300;
-            bitmap.height = 400;
+            bitmap.alpha = 1;
+            bitmap.width = BMP_WIDTH;
+            bitmap.height = BMP_HEIGHT;
+            bitmap.x = stage.stageWidth / 2 - bitmap.width / 2;
+            bitmap.y = stage.stageHeight / 2 - bitmap.height / 2;
             this.parent.addChild(bitmap)
+            dispatchEvent(new ItemAddedToStage(ItemAddedToStage.ITEM_ADDES_TO_STAGE))
         }
 
         private function updateProgress(e:ProgressValueEvent):void {
             // createProgressBar(e.value)
             progressBar.scaleX = e.value / 100;
+        }
+
+        private function drawLines(e:ItemAddedToStage):void {
+            var xyTo:Point = Random.RandomePosition(stageProp.width, stageProp.height);
+            if (!startPoint) {
+                startPoint = Random.RandomePosition(stageProp.width, stageProp.height)
+            }
+            randomLine = new ShapeFactory(ENUM.LINE, {color: Random.RandomeColor(), x: startPoint.x,
+                    y: startPoint.y,
+                    toX: xyTo.x,
+                    toY: xyTo.y});
+            this.parent.addChild(randomLine);
+            setTimeout(function timeOUt():void {
+                startPoint = xyTo;
+                dispatchEvent(new ItemAddedToStage(ItemAddedToStage.ITEM_ADDES_TO_STAGE))
+            }, 100)
         }
 
     }
