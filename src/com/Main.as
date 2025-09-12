@@ -9,12 +9,15 @@ package com {
     import com.events.LoadedImageFile;
     import flash.display.Shape;
     import flash.display.Bitmap;
+    import com.factory.ShapeFactory;
+    import com.util.ENUM;
+    import com.util.Console;
 
     public class Main extends Sprite {
 
         private var loader:URLoader
-        private var progressBar:Shape;
-
+        private var progressBar:ShapeFactory;
+        private var console:Console=new Console('MAIN');
         public function Main():void {
             super();
             if (stage)
@@ -38,13 +41,7 @@ package com {
         }
 
         private function createProgressBar(width:int = 0):void {
-            trace(width)
-            progressBar = new Shape();
-            progressBar.graphics.clear();
-            progressBar.graphics.beginFill(0xFF0000);
-            progressBar.graphics.drawRoundRect(0, 0, stage.stageWidth, 10, 15, 15);
-            progressBar.graphics.endFill();
-            progressBar.scaleX=0;
+            progressBar = new ShapeFactory(ENUM.ROUND_RECT, {color: 0xFF0000, x: 0, y: 0, width: stage.stageWidth, height: 10, ellipseWidth: 15, ellipseHeight: 15})
             this.parent.addChild(progressBar)
         }
 
@@ -61,17 +58,17 @@ package com {
 
         private function loadedImageFileHandler(e:LoadedImageFile):void {
             var bitmap:Bitmap = e.imageFile;
-            bitmap.alpha=0.5;
-            bitmap.x=10;
-            bitmap.y=10;
-            bitmap.width=300;
-            bitmap.height=400;
+            bitmap.alpha = 0.5;
+            bitmap.x = 10;
+            bitmap.y = 10;
+            bitmap.width = 300;
+            bitmap.height = 400;
             this.parent.addChild(bitmap)
         }
 
         private function updateProgress(e:ProgressValueEvent):void {
             // createProgressBar(e.value)
-             progressBar.scaleX = e.value/100;
+            progressBar.scaleX = e.value / 100;
         }
 
     }
