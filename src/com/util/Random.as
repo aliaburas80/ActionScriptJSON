@@ -18,7 +18,7 @@ package com.util {
 
 
         public static function RandomeColor():uint {
-            return uint(Math.random() * 0x1000000);
+            return uint(Math.random() * 0xFFFFFF);
         }
     }
 }

@@ -17,6 +17,9 @@ package com {
     import flash.display.Stage;
     import flash.utils.setTimeout;
     import flash.geom.Point;
+    import com.greensock.TweenLite;
+    import com.greensock.easing.Back;
+    import com.greensock.easing.Quad;
 
     public class Main extends Sprite {
 
@@ -27,9 +30,10 @@ package com {
         private var _stage:Stage;
         private var stageProp:Object;
         private var startPoint:Point;
+        private var state:Object = {t: 0}; // progress 0..1
 
-        private  const BMP_WIDTH:int = 450;
-        private  const BMP_HEIGHT:int = 400;
+        private const BMP_WIDTH:int = 450;
+        private const BMP_HEIGHT:int = 400;
 
         public function Main():void {
             super();
@@ -72,13 +76,15 @@ package com {
 
         private function loadedImageFileHandler(e:LoadedImageFile):void {
             var bitmap:Bitmap = e.imageFile;
-            bitmap.alpha = 1;
+            bitmap.alpha = 0;
             bitmap.width = BMP_WIDTH;
             bitmap.height = BMP_HEIGHT;
             bitmap.x = stage.stageWidth / 2 - bitmap.width / 2;
             bitmap.y = stage.stageHeight / 2 - bitmap.height / 2;
-            this.parent.addChild(bitmap)
-            dispatchEvent(new ItemAddedToStage(ItemAddedToStage.ITEM_ADDES_TO_STAGE))
+            this.parent.addChildAt(bitmap,1);
+            TweenLite.to(bitmap, 1, {alpha: 1, ease: Back.easeOut, onComplete: function():void {
+                dispatchEvent(new ItemAddedToStage(ItemAddedToStage.ITEM_ADDES_TO_STAGE))
+            }})
         }
 
         private function updateProgress(e:ProgressValueEvent):void {
@@ -91,15 +97,31 @@ package com {
             if (!startPoint) {
                 startPoint = Random.RandomePosition(stageProp.width, stageProp.height)
             }
-            randomLine = new ShapeFactory(ENUM.LINE, {color: Random.RandomeColor(), x: startPoint.x,
-                    y: startPoint.y,
-                    toX: xyTo.x,
-                    toY: xyTo.y});
-            this.parent.addChild(randomLine);
-            setTimeout(function timeOUt():void {
-                startPoint = xyTo;
-                dispatchEvent(new ItemAddedToStage(ItemAddedToStage.ITEM_ADDES_TO_STAGE))
-            }, 100)
+            // randomLine = new ShapeFactory(ENUM.LINE, {color: Random.RandomeColor(), x: startPoint.x,
+            //         y: startPoint.y,
+            //         toX: xyTo.x,
+            //         toY: xyTo.y});
+            // this.parent.addChild(randomLine);
+            // setTimeout(function timeOUt():void {
+            //     startPoint = xyTo;
+            //     dispatchEvent(new ItemAddedToStage(ItemAddedToStage.ITEM_ADDES_TO_STAGE))
+            // }, 100);
+
+            state.t = 0;
+            TweenLite.to(state, 0.5, {t: 1, ease: Quad.easeOut,
+                    onUpdate: function():void {
+                        randomLine = new ShapeFactory(ENUM.LINE, {color: Random.RandomeColor(), x: startPoint.x,
+                                y: startPoint.y,
+                                toX: xyTo.x,
+                                toY: xyTo.y,
+                                thikness: Math.round(Math.random() * 3) + 1});
+                        stage.addChildAt(randomLine,0);
+                    },
+                    onComplete: function():void {
+                        startPoint = xyTo;
+                        dispatchEvent(new ItemAddedToStage(ItemAddedToStage.ITEM_ADDES_TO_STAGE))
+                    }});
+
         }
 
     }
